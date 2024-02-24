@@ -8,6 +8,7 @@ app/model/fasttext_clustered_model.model.wv.vectors_ngrams.npy
 /app/model/ingredient_clusters.pkl
 /model/imgset
 
+/app/model/tfidf_vector.pkl
 /app/model/baseline_decoder.pt
 /app/model/baseline_encoder.pt
 /app/model/data_embedding_f.npy
