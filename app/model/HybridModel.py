@@ -21,23 +21,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from .data_utils import load_and_process_data
+products, image_urls = load_and_process_data()
+
 with open("app/model/tfidf_vector.pkl", "rb") as f:
     tfidf_vector = pickle.load(f)
 
-product = pd.read_csv('app/dataset/preprocessing_product.csv')
-# 'product_price' 열을 'price'로 이름을 변경
-product.rename(columns={'product_price': 'price'}, inplace=True)
-# productType 열 추가 및 'mealkit' 값으로 채우기
-product['productType'] = 'mealkit'
-# discountRate 열 추가 및 5, 10, 20, 30 중 랜덤하게 선택하여 채우기
-product['discountRate'] = np.random.choice([5, 10, 20, 30], size=len(product))
-
-tfidf_matrix = tfidf_vector.fit_transform(product['food_ingredient']).toarray()
+tfidf_matrix = tfidf_vector.fit_transform(products['food_ingredient']).toarray()
 tfidf_matrix_feature = tfidf_vector.get_feature_names_out()
-tfidf_matrix = pd.DataFrame(tfidf_matrix, columns=tfidf_matrix_feature, index = product.product_name)
+tfidf_matrix = pd.DataFrame(tfidf_matrix, columns=tfidf_matrix_feature, index = products.product_name)
 
 cosine_sim = cosine_similarity(tfidf_matrix)
-cosine_sim_df = pd.DataFrame(cosine_sim, index = product.product_name, columns = product.product_name)
+cosine_sim_df = pd.DataFrame(cosine_sim, index = products.product_name, columns = products.product_name)
 
 def ingredient_recommendations_product_id(target_name, matrix, items, k=10):
     recom_idx = matrix.loc[:, target_name].values.reshape(1, -1).argsort()[:, ::-1].flatten()[1:k+1]
@@ -123,17 +118,6 @@ class ConvEncoder(nn.Module):
         x = self.relu3(x)
         x = self.maxpool3(x)
         return x
-    
-
-products = pd.read_csv('app/dataset/hmall_food_last.csv')
-image_df = products[['image_main']]
-
-products = pd.concat([product, image_df], axis=1)
-
-image_urls = []
-
-for url in products['image_main']:
-    image_urls.append(url)
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 encoder = ConvEncoder()
