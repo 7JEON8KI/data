@@ -162,8 +162,8 @@ def hybrid_recommender(target_name, target_image_path, products=products, conten
     result = []
     for index, row in recommended_products.iterrows():
         result.append({
-            "product_id": str(row['product_id']),
-            "product_name": str(row['product_name']),
+            "productId": str(row['product_id']),
+            "productName": str(row['product_name']),
             "price": str(row['price']),
             "mainImgUrl": str(row['image_main']),
             "productType" : str(row['productType']), 

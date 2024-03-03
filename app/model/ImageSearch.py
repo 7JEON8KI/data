@@ -141,8 +141,8 @@ def image_processing_and_search(image_file, IMG_HEIGHT=512, IMG_WIDTH=512, devic
     result = []
     for product in similar_products:
         result.append({
-            "product_id": str(product['product_id']),
-            "product_name": str(product['product_name']),
+            "productId": str(product['product_id']),
+            "productName": str(product['product_name']),
             "price": str(product['price']),
             "mainImgUrl": str(product['image_main']),
             "productType" : str(product['productType']), 
