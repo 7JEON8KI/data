@@ -43,3 +43,4 @@ torchvision==0.15.1
 numpy==1.25.2
 matplotlib==3.4.3
 Pillow==8.4.0
+python-multipart==0.0.5

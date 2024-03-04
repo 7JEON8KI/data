@@ -1,4 +1,5 @@
-from fastapi import APIRouter, UploadFile
+import base64
+from fastapi import APIRouter, File, UploadFile
 from pydantic import BaseModel
 from fastapi.routing import APIRouter
 import torchvision.transforms as transforms
@@ -9,6 +10,7 @@ from io import BytesIO
 from .model.HybridModel import hybrid_recommender
 
 from .model.ImageSearch import image_processing_and_search
+from .model.AgeGenderModel import recommend_by_age_gender
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
@@ -19,8 +21,9 @@ class ProductItem(BaseModel):
     productName: str
     productMainImage: str
 
-# class SearchImage(BaseModel):
-#     productImage: UploadFile
+class MemberInfo(BaseModel):
+    ageGroup: int
+    gender: int
 
 @router.post("/hybrid-recommendations")
 async def calculate_recommendations_scores(item: ProductItem):
@@ -30,8 +33,15 @@ async def calculate_recommendations_scores(item: ProductItem):
     return hybrid_recommendations
 
 @router.post("/image-search")
-async def image_search(file: UploadFile):
-    contents = await file.read()
-    img = Image.open(BytesIO(contents))
+async def image_search(file: bytes = File(...)):
+    img = Image.open(BytesIO(base64.b64decode(file)))
     image_search_results = image_processing_and_search(img)
     return image_search_results
+
+@router.post("/age-gender-recommendation")
+async def age_gender_recommendation(info: MemberInfo):
+    target_age = info.ageGroup
+    target_gender = info.gender
+    print(target_age, target_gender)
+    recommendations = recommend_by_age_gender(target_age, target_gender)
+    return recommendations
