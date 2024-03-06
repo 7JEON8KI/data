@@ -127,6 +127,7 @@ def image_processing_and_search(image_file, IMG_HEIGHT=512, IMG_WIDTH=512, devic
 
     transform = transforms.ToTensor()
     img_tensor = transform(img_resized).unsqueeze(0).to(device)
+    img_tensor = img_tensor[:, :3, :, :]
 
     encoder.load_state_dict(torch.load(ENCODER_MODEL_PATH, map_location=device))
     encoder.eval()
