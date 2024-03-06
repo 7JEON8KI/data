@@ -7,18 +7,20 @@ df_orders = load_orders_data()
 popular_products_by_group = df_orders.groupby(['age_group', 'member_gender'])['product_id'].value_counts().groupby(level=[0, 1]).head(5)
 
 def recommend_by_age_gender(age_group, gender):
+    gender_str = "남성" if gender == 1 else "여성"
     recommendations = popular_products_by_group.loc[(age_group, gender)]
-    result = {
-        "ageGroup": age_group,
-        "gender": gender,
-        "products": []
-    }
+    result = [
+        {
+            "ment" : str(age_group) + "대 " + gender_str + "에게 인기 많은 밀킷",
+            "products": []
+        }
+    ]
     for product_id in recommendations.index:
         product = df_products[df_products['product_id'] == product_id].iloc[0]
-        result["products"].append({
+        result[0]["products"].append({
             "productId": str(product['product_id']),
             "productName": str(product['product_name']),
-            "price": str(product['price']),
+            "price": int(product['price']),
             "mainImgUrl": str(product['image_main']),
             "productType" : str(product['productType']), 
             "discountRate" : int(product['discountRate'])

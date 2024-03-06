@@ -38,6 +38,13 @@ async def image_search(file: bytes = File(...)):
     image_search_results = image_processing_and_search(img)
     return image_search_results
 
+@router.post("/image-test")
+async def image_search(file: UploadFile):
+    contents = await file.read()
+    img = Image.open(BytesIO(contents))
+    image_search_results = image_processing_and_search(img)
+    return image_search_results
+
 @router.post("/age-gender-recommendation")
 async def age_gender_recommendation(info: MemberInfo):
     target_age = info.ageGroup

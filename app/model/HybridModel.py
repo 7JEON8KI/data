@@ -130,7 +130,7 @@ encoder.to(device)
 # Loads the embedding
 embedding = np.load("app/model/data_embedding_f.npy")
 
-def hybrid_recommender(target_name, target_image_path, products=products, content_matrix=cosine_sim_df, embedding=embedding, device=device, k=10):
+def hybrid_recommender(target_name, target_image_path, products=products, content_matrix=cosine_sim_df, embedding=embedding, device=device, k=5):
     """하이브리드 추천 시스템 함수"""
 
     # 콘텐츠 기반 추천 결과
@@ -138,7 +138,7 @@ def hybrid_recommender(target_name, target_image_path, products=products, conten
 
     # 이미지 기반 추천 결과
     image_indices = compute_similar_images(target_image_path, k, embedding, device)
-    image_recommendations = get_product_ids(image_indices, products)
+    image_recommendations = get_product_ids(image_indices, products)[:k]  # 최상위 k개만 선택
 
     # 콘텐츠 기반 추천과 이미지 기반 추천의 결과를 결합
     combined_recommendations = pd.DataFrame({'recom_id': content_recommendations, 'recommendation_score': 1})
@@ -155,7 +155,7 @@ def hybrid_recommender(target_name, target_image_path, products=products, conten
 
     # recom_id에 해당하는 product 데이터를 데이터프레임 형태로 반환
     recommended_products = pd.DataFrame()
-    for recom_id in combined_recommendations['recom_id']:
+    for recom_id in combined_recommendations['recom_id'][:k]:  # 최상위 k개만 선택
         recommended_products = pd.concat([recommended_products, products[products['product_id'] == recom_id]], ignore_index=True)
 
     # 데이터프레임을 JSON 형태로 변환
@@ -164,12 +164,13 @@ def hybrid_recommender(target_name, target_image_path, products=products, conten
         result.append({
             "productId": str(row['product_id']),
             "productName": str(row['product_name']),
-            "price": str(row['price']),
+            "price": int(row['price']),
             "mainImgUrl": str(row['image_main']),
             "productType" : str(row['productType']), 
             "discountRate" : int(row['discountRate'])
         })    
     return result
+
 
 # TARGET_PRODUCT = '청정원 호밍스 밀키트 부산식 곱창전골 760g x 2개'
 # TARGET_IMAGE_PATH = "https://image.hmall.com/static/9/9/26/27/2127269978_0.jpg?RS=520x520&AR=0&ao=2"
