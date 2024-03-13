@@ -22,6 +22,12 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .data_utils import load_and_process_data
+
+""" 
+    fileName      : HybridModel.py
+    author        : 이소민
+""" 
+
 products, image_urls = load_and_process_data()
 
 with open("app/model/tfidf_vector.pkl", "rb") as f:

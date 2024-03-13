@@ -10,6 +10,12 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
 from .data_utils import load_and_process_data
+
+""" 
+    fileName      : ImageSearch.py
+    author        : 이소민
+""" 
+
 products, image_urls = load_and_process_data()
 
 NUM_IMAGES = 10

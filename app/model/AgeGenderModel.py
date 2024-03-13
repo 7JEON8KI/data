@@ -1,6 +1,11 @@
 from .data_utils import load_and_process_data
 from .data_utils import load_orders_data
 
+""" 
+    fileName      : AgeGenderModel.py
+    author        : 이소민
+""" 
+
 df_products, _ = load_and_process_data()
 df_orders = load_orders_data()
 

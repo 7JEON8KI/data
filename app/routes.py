@@ -11,11 +11,15 @@ from .model.HybridModel import hybrid_recommender
 
 from .model.ImageSearch import image_processing_and_search
 from .model.AgeGenderModel import recommend_by_age_gender
-
-router = APIRouter(prefix="/ai", tags=["ai"])
-
 from typing import List, Optional
 from pydantic import BaseModel
+
+""" 
+    fileName      : routes.py
+    author        : 이소민
+""" 
+
+router = APIRouter(prefix="/ai", tags=["ai"])
 
 class SearchRequestDTO(BaseModel):
     preferredIngredients: Optional[List[str]] = None

@@ -1,6 +1,10 @@
-# data_utils.py
 import pandas as pd
 import numpy as np
+
+""" 
+    fileName      : data_utils.py
+    author        : 이소민
+""" 
 
 def load_and_process_data():
     products = pd.read_csv('app/dataset/product_df_with_ingredients.csv')
