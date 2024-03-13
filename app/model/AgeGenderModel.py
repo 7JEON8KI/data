@@ -16,13 +16,13 @@ def recommend_by_age_gender(age_group, gender):
         }
     ]
     for product_id in recommendations.index:
-        product = df_products[df_products['product_id'] == product_id].iloc[0]
+        product = df_products[df_products['PRODUCT_ID'] == product_id].iloc[0]
         result[0]["products"].append({
-            "productId": str(product['product_id']),
-            "productName": str(product['product_name']),
-            "price": int(product['price']),
-            "mainImgUrl": str(product['image_main']),
-            "productType" : str(product['productType']), 
-            "discountRate" : int(product['discountRate'])
+            "productId": str(product['PRODUCT_ID']),
+            "productName": str(product['PRODUCT_NAME']),
+            "price": int(product['PRICE']),
+            "mainImgUrl": str(product['THUMBNAIL_IMAGE_URL']),
+            "productType" : str(product['PRODUCT_TYPE']), 
+            "discountRate" : int(product['DISCOUNT_RATE'])
         })
     return result

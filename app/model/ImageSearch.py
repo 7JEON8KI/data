@@ -114,7 +114,7 @@ def get_products(indices_list, products):
             continue
         for index in sublist:
             try:
-                product = products.iloc[index]
+                product = products.iloc[index-1]
                 similar_products.append(product)
             except IndexError:
                 print(f"Invalid index: {index}. Skipping...")
@@ -138,15 +138,19 @@ def image_processing_and_search(image_file, IMG_HEIGHT=512, IMG_WIDTH=512, devic
 
     indices_list = compute_similar_images(img_tensor, NUM_IMAGES, embedding, device)
     similar_products = get_products(indices_list, products)
+    
+    print("indices_list : ", indices_list)
+    similar_product_ids = [product['PRODUCT_ID'] for product in similar_products]
+    print(similar_product_ids)
 
     result = []
     for product in similar_products:
         result.append({
-            "productId": str(product['product_id']),
-            "productName": str(product['product_name']),
-            "price": str(product['price']),
-            "mainImgUrl": str(product['image_main']),
-            "productType" : str(product['productType']), 
-            "discountRate" : int(product['discountRate'])
+            "productId": str(product['PRODUCT_ID']),
+            "productName": str(product['PRODUCT_NAME']),
+            "price": str(product['PRICE']),
+            "mainImgUrl": str(product['THUMBNAIL_IMAGE_URL']),
+            "productType" : str(product['PRODUCT_TYPE']), 
+            "discountRate" : int(product['DISCOUNT_RATE'])
         })    
     return result

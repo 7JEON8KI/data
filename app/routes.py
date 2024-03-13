@@ -14,8 +14,12 @@ from .model.AgeGenderModel import recommend_by_age_gender
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
-class TxtItem(BaseModel):
-    content: str
+from typing import List, Optional
+from pydantic import BaseModel
+
+class SearchRequestDTO(BaseModel):
+    preferredIngredients: Optional[List[str]] = None
+    unwantedIngredients: Optional[List[str]] = None
 
 class ProductItem(BaseModel):
     productName: str
@@ -34,7 +38,7 @@ async def calculate_recommendations_scores(item: ProductItem):
 
 @router.post("/image-search")
 async def image_search(file: bytes = File(...)):
-    img = Image.open(BytesIO(base64.b64decode(file)))
+    img = Image.open(BytesIO(base64.b64decode(file))).convert("RGB")
     image_search_results = image_processing_and_search(img)
     return image_search_results
 
