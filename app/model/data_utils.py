@@ -1,23 +1,16 @@
-# data_utils.py
 import pandas as pd
 import numpy as np
 
+""" 
+    fileName      : data_utils.py
+    author        : 이소민
+""" 
+
 def load_and_process_data():
-    product = pd.read_csv('app/dataset/preprocessing_product.csv')
-    product.rename(columns={'product_price': 'price'}, inplace=True)
-    product['productType'] = 'mealkit'
-    product['discountRate'] = np.random.choice([5, 10, 20, 30], size=len(product))
-
-    products = pd.read_csv('app/dataset/hmall_food_last.csv')
-    image_df = products[['image_main']]
-
-    products = pd.concat([product, image_df], axis=1)
-    products['product_id'] = products['product_id'] + 300
+    products = pd.read_csv('app/dataset/product_df_with_ingredients.csv')
     image_urls = []
-
-    for url in products['image_main']:
+    for url in products['THUMBNAIL_IMAGE_URL']:
         image_urls.append(url)
-
     return products, image_urls
 
 def load_orders_data():

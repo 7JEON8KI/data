@@ -5,6 +5,11 @@ from app import routes
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 
+""" 
+    fileName      : main.py
+    author        : 이소민
+""" 
+
 app = FastAPI()
 app.include_router(routes.router)
 

@@ -22,21 +22,27 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from .data_utils import load_and_process_data
+
+""" 
+    fileName      : HybridModel.py
+    author        : 이소민
+""" 
+
 products, image_urls = load_and_process_data()
 
 with open("app/model/tfidf_vector.pkl", "rb") as f:
     tfidf_vector = pickle.load(f)
 
-tfidf_matrix = tfidf_vector.fit_transform(products['food_ingredient']).toarray()
+tfidf_matrix = tfidf_vector.fit_transform(products['INGREDIENTS']).toarray()
 tfidf_matrix_feature = tfidf_vector.get_feature_names_out()
-tfidf_matrix = pd.DataFrame(tfidf_matrix, columns=tfidf_matrix_feature, index = products.product_name)
+tfidf_matrix = pd.DataFrame(tfidf_matrix, columns=tfidf_matrix_feature, index = products.PRODUCT_NAME)
 
 cosine_sim = cosine_similarity(tfidf_matrix)
-cosine_sim_df = pd.DataFrame(cosine_sim, index = products.product_name, columns = products.product_name)
+cosine_sim_df = pd.DataFrame(cosine_sim, index = products.PRODUCT_NAME, columns = products.PRODUCT_NAME)
 
 def ingredient_recommendations_product_id(target_name, matrix, items, k=10):
     recom_idx = matrix.loc[:, target_name].values.reshape(1, -1).argsort()[:, ::-1].flatten()[1:k+1]
-    recom_id = items.iloc[recom_idx, :].product_id.values
+    recom_id = items.iloc[recom_idx, :].PRODUCT_ID.values
     return recom_id
 
 IMG_HEIGHT = 512 
@@ -82,7 +88,7 @@ def get_product_ids(indices_list, products):
 
         for index in sublist:
             try:
-                product_id = products.iloc[index]['product_id']
+                product_id = products.iloc[index]['PRODUCT_ID']
                 similar_product_ids.append(product_id)
 
             except IndexError:
@@ -156,28 +162,17 @@ def hybrid_recommender(target_name, target_image_path, products=products, conten
     # recom_id에 해당하는 product 데이터를 데이터프레임 형태로 반환
     recommended_products = pd.DataFrame()
     for recom_id in combined_recommendations['recom_id'][:k]:  # 최상위 k개만 선택
-        recommended_products = pd.concat([recommended_products, products[products['product_id'] == recom_id]], ignore_index=True)
+        recommended_products = pd.concat([recommended_products, products[products['PRODUCT_ID'] == recom_id]], ignore_index=True)
 
     # 데이터프레임을 JSON 형태로 변환
     result = []
     for index, row in recommended_products.iterrows():
         result.append({
-            "productId": str(row['product_id']),
-            "productName": str(row['product_name']),
-            "price": int(row['price']),
-            "mainImgUrl": str(row['image_main']),
-            "productType" : str(row['productType']), 
-            "discountRate" : int(row['discountRate'])
+            "productId": str(row['PRODUCT_ID']),
+            "productName": str(row['PRODUCT_NAME']),
+            "price": int(row['PRICE']),
+            "mainImgUrl": str(row['THUMBNAIL_IMAGE_URL']),
+            "productType" : str(row['PRODUCT_TYPE']), 
+            "discountRate" : int(row['DISCOUNT_RATE'])
         })    
     return result
-
-
-# TARGET_PRODUCT = '청정원 호밍스 밀키트 부산식 곱창전골 760g x 2개'
-# TARGET_IMAGE_PATH = "https://image.hmall.com/static/9/9/26/27/2127269978_0.jpg?RS=520x520&AR=0&ao=2"
-# NUM_RECOMMENDATIONS = 10
-# WEIGHT_CONTENT = 0.5
-# WEIGHT_IMAGE = 0.5
-
-# # 예시 사용
-# hybrid_recommendations = hybrid_recommender(TARGET_PRODUCT, TARGET_IMAGE_PATH, products, cosine_sim_df, embedding, device, NUM_RECOMMENDATIONS)
-# print(hybrid_recommendations)
